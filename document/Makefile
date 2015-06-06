@@ -1,11 +1,11 @@
+NAME = ms
+
 LATEX       = pdflatex
 BASH        = bash -c
 ECHO        = echo
 RM          = rm -rf
 TMP_SUFFS   = pdf aux bbl blg log dvi ps eps out
-CHECK_RERUN = grep Rerun $*.log
-
-NAME = ms
+CHECK_RERUN = grep Rerun ${NAME}.log
 
 all: ${NAME}.pdf
 
