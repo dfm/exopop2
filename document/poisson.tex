@@ -1,0 +1,171 @@
+\documentclass[12pt,preprint]{aastex}
+
+\pdfoutput=1
+
+\usepackage{color,hyperref}
+\definecolor{linkcolor}{rgb}{0,0,0.5}
+\hypersetup{colorlinks=true,linkcolor=linkcolor,citecolor=linkcolor,
+            filecolor=linkcolor,urlcolor=linkcolor}
+\usepackage{url}
+\usepackage{amssymb,amsmath}
+\usepackage{subfigure}
+\usepackage{booktabs}
+
+\usepackage{natbib}
+\bibliographystyle{apj}
+
+
+\newcommand{\project}[1]{\textsl{#1}}
+\newcommand{\kepler}{\project{Kepler}}
+\newcommand{\terra}{\project{TERRA}}
+\newcommand{\license}{MIT License}
+
+\newcommand{\paper}{\textsl{Article}}
+
+\newcommand{\foreign}[1]{\emph{#1}}
+\newcommand{\etal}{\foreign{et\,al.}}
+\newcommand{\etc}{\foreign{etc.}}
+\newcommand{\True}{\foreign{True}}
+\newcommand{\Truth}{\foreign{Truth}}
+
+\newcommand{\figref}[1]{\ref{fig:#1}}
+\newcommand{\Fig}[1]{\figurename~\figref{#1}}
+\newcommand{\fig}[1]{\Fig{#1}}
+\newcommand{\figlabel}[1]{\label{fig:#1}}
+\newcommand{\Tab}[1]{Table~\ref{tab:#1}}
+\newcommand{\tab}[1]{\Tab{#1}}
+\newcommand{\tablabel}[1]{\label{tab:#1}}
+\newcommand{\Eq}[1]{Equation~(\ref{eq:#1})}
+\newcommand{\eq}[1]{\Eq{#1}}
+\newcommand{\eqalt}[1]{Equation~\ref{eq:#1}}
+\newcommand{\eqlabel}[1]{\label{eq:#1}}
+\newcommand{\sectionname}{Section}
+\newcommand{\Sect}[1]{\sectionname~\ref{sect:#1}}
+\newcommand{\sect}[1]{\Sect{#1}}
+\newcommand{\sectalt}[1]{\ref{sect:#1}}
+\newcommand{\App}[1]{Appendix~\ref{sect:#1}}
+\newcommand{\app}[1]{\App{#1}}
+\newcommand{\sectlabel}[1]{\label{sect:#1}}
+
+\newcommand{\dd}{\ensuremath{\,\mathrm{d}}}
+\newcommand{\bvec}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\densityunit}{{\ensuremath{\mathrm{nat}^{-2}}}}
+
+% TO DOS
+\newcommand{\todo}[3]{{\color{#2} \emph{#1} TODO: #3}}
+\newcommand{\dfmtodo}[1]{\todo{DFM}{red}{#1}}
+\newcommand{\hoggtodo}[1]{\todo{HOGG}{blue}{#1}}
+
+% Response to referee
+\definecolor{mygreen}{rgb}{0, 0.50196, 0}
+\newcommand{\response}[1]{#1}
+% \newcommand{\response}[1]{{\color{mygreen} {\bf #1}}}
+
+% Document specific variables.
+\newcommand{\rate}{\ensuremath{\lambda}}
+\newcommand{\intrate}{\ensuremath{\Lambda}}
+
+\begin{document}
+
+\title{%
+    Note about the Poisson Process for population inference
+}
+
+\newcommand{\uw}{2}
+\newcommand{\nyu}{3}
+\author{%
+    Daniel~Foreman-Mackey\altaffilmark{1,\uw,\nyu}
+}
+\altaffiltext{1}         {Sagan Fellow; \url{danfm@nyu.edu}}
+\altaffiltext{\uw}       {Department of Astronomy, University of Washington,
+                          Seattle, WA, 98195, USA}
+\altaffiltext{\nyu}      {Center for Cosmology and Particle Physics,
+                          Department of Physics, New York University,
+                          4 Washington Place, New York, NY, 10003, USA}
+
+\section{The Poisson Process}
+
+Given a rate density function $\rate(\bvec{w})$, the Poisson probability of
+observing $N$ events in some volume $\bvec{w} \in \bvec{W}$ is
+\begin{eqnarray}\eqlabel{count}
+p(N) &=& \frac{\intrate^N\,e^{-\intrate}}{N!}
+\end{eqnarray}
+where
+\begin{eqnarray}
+\intrate &=& \int_{\bvec{W}} \rate(\bvec{w}) \dd\bvec{w}
+\end{eqnarray}
+is the total rate in the volume.
+
+Under this same model, the probability of an event at $\bvec{w}_n$ is
+\begin{eqnarray}
+p(\bvec{w}_n) &=& \frac{\rate(\bvec{w}_n)}{\intrate} \quad.
+\end{eqnarray}
+Then, once we have $N$ independent events $\{\bvec{w}_n\}_{n=1}^N$, the
+probability across the full sample is
+\begin{eqnarray}\eqlabel{ind}
+p(\{\bvec{w}_n\}) &=& N!\,\prod_{n=1}^N\frac{\rate(\bvec{w}_n)}{\intrate}
+\end{eqnarray}
+where the $N!$ combinatoric term comes from the exchangeability of the
+samples and it is important for the next step.
+
+Combining \eq{count} and \eq{ind}, we can derive the standard expression for
+the Poisson Process likelihood function
+\begin{eqnarray}
+p(N,\,\{\bvec{w}_n\}) &=& p(N)\,p(\{\bvec{w}_n\}) \\
+&=& \frac{\intrate^N\,e^{-\intrate}}{N!} \,
+    N!\,\prod_{n=1}^N\frac{\rate(\bvec{w}_n)}{\intrate} \\
+&=& e^{-\intrate} \, \prod_{n=1}^N\rate(\bvec{w}_n) \quad.
+\end{eqnarray}
+
+\section{Mixture of Poisson Processes}
+
+Let's say that each point $n$ in our sample is generated from one of $K$
+distinct populations with underlying rate densities $\rate_k(\bvec{w})$.
+In this case, the joint likelihood across the full sample can be written as
+\begin{eqnarray}
+p(N,\,\{\bvec{w}_n\}\,|\,\{q_n\}) &=&
+    \exp\left(-\sum_{k=1}^K\intrate_k\right) \,
+    \prod_{n=1}^N\prod_{k=1}^K
+        \left[\rate_k(\bvec{w}_n)\right]^{\bvec{1}(q_n = k)}
+\end{eqnarray}
+where $q_n$ is the class of object $n$ and $\bvec{1}(\cdot)$ is the indicator
+function that equals one if the argument is true and zero otherwise.
+This equation can be easily derived by splitting the sample into the $K$
+subsamples, writing the Poisson Process likelihood for each subsample, and
+taking the product.
+
+Now, we will relax our assumptions and allow for the fact that we don't know
+the class memberships $\{q_n\}$ \foreign{a priori}.
+Instead, we can choose a prior over class memberships
+\begin{eqnarray}
+p(q_n) &=& \prod_{k=1}^K {Q_k}^{\bvec{1}(q_n = k)}
+\end{eqnarray}
+where $\sum_k Q_k = 1$, and marginalize over choice of class for each sample.
+Doing this, we find
+\begin{eqnarray}
+p(N,\,\{\bvec{w}_n\}) &=&
+    \exp\left(-\sum_{k=1}^K\intrate_k\right) \,
+    \prod_{n=1}^N\sum_{k=1}^K
+        Q_k\,\rate_k(\bvec{w}_n)
+\end{eqnarray}
+
+
+% \begin{figure}[p]
+% \begin{center}
+% \includegraphics[width=\textwidth]{figures/smooth/results.pdf}
+% \end{center}
+% \caption{%
+% {\bf Simulated data}.
+% Inferences about the rate density based on the simulated catalog \modela.
+% \emph{Center:} the points with error bars show the exoplanet candidates in the
+% simulated incomplete catalog, the contours show the survey completeness
+% function (\citealt{petigura}), and the grayscale shows the median posterior
+% occurrence surface.
+% \emph{Top and left:} the red dashed line shows the true distribution that was
+% used to generate the catalog, the points with error bars show the results of
+% the inverse-detection-efficiency procedure, and the histograms are posterior
+% samples from the marginalized rate density as inferred by our method.
+% \figlabel{smooth-results}}
+% \end{figure}
+
+\end{document}
