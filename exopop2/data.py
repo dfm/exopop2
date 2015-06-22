@@ -26,5 +26,7 @@ def get_catalog(name, basepath="data"):
     return df
 
 
-get_kois = lambda: get_catalog("q1_q17_dr24_koi")
-get_stlr = lambda: get_catalog("q1_q17_dr24_stellar")
+get_kois = lambda: get_catalog("q1_q16_koi")
+get_stlr = lambda: get_catalog("q1_q16_stellar")
+# get_kois = lambda: get_catalog("q1_q17_dr24_koi")
+# get_stlr = lambda: get_catalog("q1_q17_dr24_stellar")
